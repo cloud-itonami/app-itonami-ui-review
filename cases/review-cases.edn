@@ -1,0 +1,98 @@
+;; Shared review cases as data (ADR 0001 §4).
+;; Each case: {:id ... :fn <core fn name> :args [...] :expect {...}}.
+;; Positive and negative controls are paired; the runner fails closed
+;; on any mismatch.
+[{:id "target-ok"
+  :fn "valid-target?"
+  :args [{:target/name "otehon-shell"
+          :target/origin "https://example.invalid/shell/"
+          :target/kinds #{:shell}
+          :target/artifact-digest "sha256:0123456789abcdef"}]
+  :expect {:ok true
+           :target {:target/name "otehon-shell"
+                    :target/origin "https://example.invalid/shell/"
+                    :target/kinds #{:shell}
+                    :target/artifact-digest "sha256:0123456789abcdef"}}}
+
+ {:id "target-rejects-http-origin"
+  :fn "valid-target?"
+  :args [{:target/name "otehon-shell"
+          :target/origin "http://example.invalid/shell/"
+          :target/kinds #{:shell}
+          :target/artifact-digest "sha256:0123456789abcdef"}]
+  :expect {:ok false :reasons [:origin-must-be-https]}}
+
+ {:id "target-rejects-blank-name"
+  :fn "valid-target?"
+  :args [{:target/name "  "
+          :target/origin "https://example.invalid/shell/"
+          :target/kinds #{:shell}
+          :target/artifact-digest "sha256:0123456789abcdef"}]
+  :expect {:ok false :reasons [:blank-name]}}
+
+ {:id "target-rejects-unknown-kind"
+  :fn "valid-target?"
+  :args [{:target/name "wallet-probe"
+          :target/origin "https://example.invalid/w/"
+          :target/kinds #{:wallet}
+          :target/artifact-digest "sha256:0123456789abcdef"}]
+  :expect {:ok false :reasons [:unknown-or-empty-kinds]}}
+
+ {:id "target-rejects-missing-digest"
+  :fn "valid-target?"
+  :args [{:target/name "saifu-screen"
+          :target/origin "https://example.invalid/saifu/"
+          :target/kinds #{:dapp}}]
+  :expect {:ok false :reasons [:missing-artifact-digest]}}
+
+ {:id "matrix-2x2x1"
+  :fn "matrix"
+  :args [{:browsers ["chromium" "firefox"]
+          :devices ["desktop" "pixel-8"]
+          :viewports ["1280x800"]}]
+  :expect {:ok true
+           :sessions [{:browser "chromium" :device "desktop" :viewport "1280x800"}
+                      {:browser "chromium" :device "pixel-8" :viewport "1280x800"}
+                      {:browser "firefox" :device "desktop" :viewport "1280x800"}
+                      {:browser "firefox" :device "pixel-8" :viewport "1280x800"}]}}
+
+ {:id "matrix-rejects-empty-axis"
+  :fn "matrix"
+  :args [{:browsers [] :devices ["desktop"] :viewports ["1280x800"]}]
+  :expect {:ok false :reasons [:no-browsers]}}
+
+ {:id "matrix-over-cap-is-error"
+  :fn "matrix"
+  :args [{:browsers ["a" "b" "c"] :devices ["d1" "d2"] :viewports ["v"]} 4]
+  :expect {:ok false :reasons [:matrix-over-cap] :count 6 :cap 4}}
+
+ {:id "verdict-all-pass"
+  :fn "verdict"
+  :args [[{:step "s1" :status :pass} {:step "s2" :status :pass}]]
+  :expect {:status :pass :evidence-count 2}}
+
+ {:id "verdict-fail-dominates-blocked"
+  :fn "verdict"
+  :args [[{:step "s1" :status :blocked}
+          {:step "s2" :status :fail}
+          {:step "s3" :status :pass}]]
+  :expect {:status :fail :failed ["s2"] :evidence-count 3}}
+
+ {:id "verdict-blocked-without-fail"
+  :fn "verdict"
+  :args [[{:step "s1" :status :blocked} {:step "s2" :status :pass}]]
+  :expect {:status :blocked :blocked ["s1"] :evidence-count 2}}
+
+ {:id "verdict-unknown-status-fail-closed"
+  :fn "verdict"
+  :args [[{:step "s1" :status :pass} {:step "s2" :status :skipped}]]
+  :expect {:status :fail :reasons [:unknown-step-status] :offenders ["s2"]}}
+
+ {:id "strip-secrets-nested"
+  :fn "strip-secrets"
+  :args [{:target {:name "shell" :username "u" :password "p"}
+          :session {:token "t" :id "s-1"}
+          :verdict {:status :pass}}]
+  :expect {:target {:name "shell"}
+           :session {:id "s-1"}
+           :verdict {:status :pass}}}]

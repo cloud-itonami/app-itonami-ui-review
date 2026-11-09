@@ -1,0 +1,13 @@
+# NOTICE
+
+## Cleanroom statement
+
+This repository contains no BrowserStack (or other vendor) SDK, client
+library, or copied vendor code. `compat/browserstack-shape.json` is a
+newly authored, shape-only declaration of the review surface used by this
+harness (Automate session management + Percy snapshots). It claims no
+vendor conformance and relicenses nothing.
+
+## License
+
+Newly authored content in this repository is MIT (see LICENSE).

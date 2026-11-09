@@ -1,0 +1,23 @@
+# Oracle-only CI for app-itonami-ui-review.
+# Babashka runs the offline shared cases only. This job never touches
+# live BrowserStack, holds no credentials, and is not a merge gate:
+# requirement status is a separate owner decision.
+name: oracle-ui-cases
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  oracle-ui-cases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Babashka
+        uses: DeLaGuardo/setup-clojure@main
+        with:
+          bb: latest
+      - name: Run shared review cases (offline, no secrets)
+        run: bb scripts/run_cases.bb
