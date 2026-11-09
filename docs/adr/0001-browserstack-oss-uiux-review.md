@@ -13,8 +13,8 @@ Build the UIUX review harness as a **separate public itonami dApp repo**
 (this repo), not inside `network-awai-apex`:
 
 1. `network-awai-apex` is private and cannot qualify for the BrowserStack
-   Open Source program. This repo is public MIT, so it can be the
-   applicant and the audit surface.
+   Open Source program. This repo is public AGPL-3.0-or-later, so it
+   can be the applicant and the audit surface.
 2. The harness holds **shape + pure logic + case data only**.
    Review targets (Otehon React shell builds, dApp artifacts) are
    referenced by digest and resolved at run time, never vendored.
@@ -67,7 +67,7 @@ Build the UIUX review harness as a **separate public itonami dApp repo**
 
 ## 6. OSS program application (owner action, pending)
 
-The repo being public MIT makes an application possible; filing it
+The repo being public AGPL-3.0-or-later makes an application possible; filing it
 (BrowserStack Open Source program: Live/Automate/Percy on real
 browsers/devices) is a separate owner decision, as is which artifact
 builds are named as the reviewed project.
