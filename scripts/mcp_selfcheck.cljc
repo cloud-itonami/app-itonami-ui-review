@@ -1,5 +1,5 @@
 #!/usr/bin/env bb
-;; Maintained self-check for scripts/mcp_server.bb (offline tools only,
+;; Maintained self-check for scripts/mcp_server.cljc (offline tools only,
 ;; no secrets, no network). Spawns the server, speaks JSON-RPC over
 ;; stdio, and fail-closes (exit 1) on any mismatch.
 (require '[cheshire.core :as json]
@@ -9,7 +9,7 @@
 (def root-dir (-> *file* io/file .getParent io/file .getParent str))
 
 (def proc
-  (p/process ["bb" (str root-dir "/scripts/mcp_server.bb")]
+  (p/process ["bb" (str root-dir "/scripts/mcp_server.cljc")]
              {:in :pipe :out :pipe :err :inherit :dir root-dir}))
 
 (def stdin-writer (io/writer (:in proc)))

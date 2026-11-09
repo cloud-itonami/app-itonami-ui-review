@@ -47,6 +47,6 @@ Otehon shell build or an itonami dApp screen on real browsers/devices.
 
 ## First run is always offline
 
-Before any live session: `bb scripts/run_cases.bb` (22 cases) and
-`bb scripts/mcp_selfcheck.bb` (5 checks) must pass. If they do not,
+Before any live session: `bb scripts/run_cases.cljc` (22 cases) and
+`bb scripts/mcp_selfcheck.cljc` (5 checks) must pass. If they do not,
 do not proceed to live.

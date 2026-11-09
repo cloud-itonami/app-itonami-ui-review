@@ -20,4 +20,4 @@ jobs:
         with:
           bb: latest
       - name: Run shared review cases (offline, no secrets)
-        run: bb scripts/run_cases.bb
+        run: bb scripts/run_cases.cljc

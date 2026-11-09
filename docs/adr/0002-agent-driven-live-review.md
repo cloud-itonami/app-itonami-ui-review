@@ -8,13 +8,13 @@
 ## 1. What the agent uses
 
 An agent (Hermes profile with this repo's MCP entry, or any MCP-capable
-runner) drives reviews through `scripts/mcp_server.bb`:
+runner) drives reviews through `scripts/mcp_server.cljc`:
 
 | Layer | Content | Side effects |
 |---|---|---|
 | `src/ui_review/core.cljc` | validate / matrix / verdict / strip-secrets | none |
 | `src/ui_review/agent_loop.cljc` | `plan-step` / `loop-reduce` / `summarize` | none |
-| `scripts/mcp_server.bb` | JSON-RPC edges + live gate | stdio only, unless live-gated |
+| `scripts/mcp_server.cljc` | JSON-RPC edges + live gate | stdio only, unless live-gated |
 | owner transport (not in repo) | vendor specifics | network, screenshots |
 
 The harness never invokes an LLM itself: reasoning stays on the agent's
@@ -52,8 +52,8 @@ closed (`blocked`) and sends nothing.
 
 ## 4. Verification so far
 
-- `bb scripts/run_cases.bb`: 22/22 (13 R0 + 9 loop policy).
-- `bb scripts/mcp_selfcheck.bb`: 5/5 (initialize, tools/list = 9 tools,
+- `bb scripts/run_cases.cljc`: 22/22 (13 R0 + 9 loop policy).
+- `bb scripts/mcp_selfcheck.cljc`: 5/5 (initialize, tools/list = 9 tools,
   validate accept, policy refusal, live blocked without secrets).
 - `oracle-live-review` asserts the CI live path stays
   `live-transport-missing`-blocked until a transport exists.

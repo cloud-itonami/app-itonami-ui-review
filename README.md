@@ -10,7 +10,7 @@ using the BrowserStack Open Source program.
 - License: AGPL-3.0-or-later (dApp convention, same as mihari/dandori).
 - Design: [docs/adr/0001-browserstack-oss-uiux-review.md](docs/adr/0001-browserstack-oss-uiux-review.md)
 - Core (pure, portable `.cljc`): `src/ui_review/core.cljc`
-- Cases (data): `cases/review-cases.edn`, runner: `scripts/run_cases.bb`
+- Cases (data): `cases/review-cases.edn`, runner: `scripts/run_cases.cljc`
 
 ## Why a separate public repo
 
@@ -33,8 +33,8 @@ digest and fetched at run time; they are never vendored here.
 ## Run the cases (no secrets needed)
 
 ```sh
-bb scripts/run_cases.bb      # 22 shared cases, offline
-bb scripts/mcp_selfcheck.bb  # MCP server: 5 checks, offline
+bb scripts/run_cases.cljc      # 22 shared cases, offline
+bb scripts/mcp_selfcheck.cljc  # MCP server: 5 checks, offline
 ```
 
 Cases run offline against the pure nucleus. Live BrowserStack runs are a
@@ -43,7 +43,7 @@ check.
 
 ## Agent use (LLM-driven review)
 
-Agents connect via `mcp/ui-review` (stdio, `bb scripts/mcp_server.bb`)
+Agents connect via `mcp/ui-review` (stdio, `bb scripts/mcp_server.cljc`)
 and follow `agent/SKILL.md`: validate target → build matrix → bounded
 observe→act→verdict loop (`plan-step` gates every action) → `summarize`
 receipts. Offline tools always work; live tools (`session-start` /
