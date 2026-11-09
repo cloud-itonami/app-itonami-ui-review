@@ -33,12 +33,23 @@ digest and fetched at run time; they are never vendored here.
 ## Run the cases (no secrets needed)
 
 ```sh
-bb scripts/run_cases.bb
+bb scripts/run_cases.bb      # 22 shared cases, offline
+bb scripts/mcp_selfcheck.bb  # MCP server: 5 checks, offline
 ```
 
 Cases run offline against the pure nucleus. Live BrowserStack runs are a
-separate, secrets-gated step (see the ADR) and are not part of the default
+separate, secrets-gated step (see the ADRs) and are not part of the default
 check.
+
+## Agent use (LLM-driven review)
+
+Agents connect via `mcp/ui-review` (stdio, `bb scripts/mcp_server.bb`)
+and follow `agent/SKILL.md`: validate target → build matrix → bounded
+observe→act→verdict loop (`plan-step` gates every action) → `summarize`
+receipts. Offline tools always work; live tools (`session-start` /
+`session-act` / `session-snapshot`) refuse with `blocked` unless the
+owner arms `UI_REVIEW_LIVE=1` with secrets and a transport executable.
+Design: [ADR 0002](docs/adr/0002-agent-driven-live-review.md).
 
 ## License
 

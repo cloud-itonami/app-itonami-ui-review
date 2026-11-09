@@ -1,0 +1,41 @@
+# Oracle-only live-review wiring. Never a merge gate: requirement
+# status is a separate owner decision, and passing here certifies
+# nothing about Native builds or Otehon production cutover.
+name: oracle-live-review
+
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Attempt live transport (requires secrets AND owner transport)"
+        required: false
+        default: "false"
+
+jobs:
+  oracle-live-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Babashka
+        uses: DeLaGuardo/setup-clojure@main
+        with:
+          bb: latest
+      - name: Offline shared cases (no secrets)
+        run: bb scripts/run_cases.bb
+      - name: Offline MCP self-check (no secrets)
+        run: bb scripts/mcp_selfcheck.bb
+      - name: Live attempt (secrets-gated, fail-closed)
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          if [ "${{ inputs.live }}" = "true" ] && [ -n "$BROWSERSTACK_USERNAME" ] && [ -n "$BROWSERSTACK_ACCESS_KEY" ]; then
+            echo "live path armed, but no owner transport is configured in CI"
+            echo "expected: blocked live-transport-missing (fail-closed)"
+            printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"session-start","arguments":{"session":"ci-smoke"}}}' \
+              | UI_REVIEW_LIVE=1 bb scripts/mcp_server.bb | grep -q "live-transport-missing" \
+              && echo "LIVE-BLOCKED-AS-DESIGNED" \
+              || { echo "unexpected live response"; exit 1; }
+          else
+            echo "live not requested or secrets absent: skipping (blocked by design)"
+          fi
