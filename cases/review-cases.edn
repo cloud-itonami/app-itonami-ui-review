@@ -95,4 +95,87 @@
           :verdict {:status :pass}}]
   :expect {:target {:name "shell"}
            :session {:id "s-1"}
-           :verdict {:status :pass}}}]
+           :verdict {:status :pass}}}
+
+ ;; --- agent loop policy (ADR 0002) ---
+
+ {:id "loop-accepts-navigation"
+  :fn "plan-step"
+  :args [{:steps [] :snapshots 0}
+         {:type :navigate :params {:url "https://example.invalid/shell/"}}]
+  :expect {:ok true
+           :action {:type :navigate
+                    :params {:url "https://example.invalid/shell/"}}}}
+
+ {:id "loop-rejects-forbidden-action"
+  :fn "plan-step"
+  :args [{:steps [] :snapshots 0}
+         {:type :click-submit :params {}}]
+  :expect {:ok false :reasons [:forbidden-action]}}
+
+ {:id "loop-rejects-credential-params"
+  :fn "plan-step"
+  :args [{:steps [] :snapshots 0}
+         {:type :navigate
+          :params {:url "https://example.invalid/" :token "t" }}]
+  :expect {:ok false :reasons [:credential-params-refused]}}
+
+ {:id "loop-rejects-http-navigation"
+  :fn "plan-step"
+  :args [{:steps [] :snapshots 0}
+         {:type :navigate :params {:url "http://example.invalid/"}}]
+  :expect {:ok false :reasons [:non-https-navigation-refused]}}
+
+ {:id "loop-rejects-over-budget"
+  :fn "plan-step"
+  :args [{:steps [{} {}] :snapshots 0 :budget {:max-steps 2 :max-snapshots 1}}
+         {:type :snapshot :params {}}]
+  :expect {:ok false :reasons [:budget-exhausted]}}
+
+ {:id "loop-stops-on-fail"
+  :fn "loop-reduce"
+  :args [{:steps [] :snapshots 0 :status :running}
+         {:action {:type :assert-text :params {:text "OK"}}
+          :outcome {:step-status :fail}}]
+  :expect {:steps [{:action {:type :assert-text :params {:text "OK"}}
+                    :outcome {:step-status :fail}}]
+           :snapshots 0
+           :status :stopped
+           :stop-reason :step-failed}}
+
+ {:id "loop-marks-done"
+  :fn "loop-reduce"
+  :args [{:steps [] :snapshots 0 :status :running}
+         {:action {:type :snapshot :params {}}
+          :outcome {:step-status :pass :done true}}]
+  :expect {:steps [{:action {:type :snapshot :params {}}
+                    :outcome {:step-status :pass :done true}}]
+           :snapshots 1
+           :status :done}}
+
+ {:id "loop-unknown-outcome-fail-closed"
+  :fn "loop-reduce"
+  :args [{:steps [] :snapshots 0 :status :running}
+         {:action {:type :snapshot :params {}}
+          :outcome {:step-status :guessed}}]
+  :expect {:steps [{:action {:type :snapshot :params {}}
+                    :outcome {:step-status :guessed}}]
+           :snapshots 0
+           :status :stopped
+           :stop-reason :unknown-outcome}}
+
+ {:id "loop-summarize-strips-secrets"
+  :fn "summarize"
+  :args [{:steps [{:action {:type :navigate
+                            :params {:url "https://example.invalid/"
+                                     :token "t"}}
+                   :outcome {:step-status :pass}}]
+           :snapshots 0
+           :status :done}]
+  :expect {:loop-status :done
+           :stop-reason nil
+           :verdict {:status :pass :evidence-count 1}
+           :receipt {:steps [{:action {:type :navigate
+                                       :params {:url "https://example.invalid/"}}
+                              :outcome {:step-status :pass}}]
+                     :verdict {:status :pass :evidence-count 1}}}}]

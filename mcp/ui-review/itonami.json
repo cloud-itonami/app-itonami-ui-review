@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "itonami.entry.v1",
+  "sourceRefs": [
+    "mcp"
+  ],
+  "useWhen": "LLM-driven UIUX review of Otehon shell or itonami dApp screens with a bounded observe-act-verdict loop",
+  "avoidWhen": "Treating live tools as available without owner approval, transport, and secrets; handling credentials or funds",
+  "inputs": {
+    "UI_REVIEW_REPO": "owner-installed pinned checkout of app-itonami-ui-review"
+  },
+  "outputs": {
+    "protocol": "newline-delimited JSON-RPC stdio"
+  },
+  "effects": [
+    "process",
+    "filesystem-read"
+  ],
+  "authority": {
+    "grants": false,
+    "default": "blocked",
+    "binding": "owner-reviewed live approval per session; transport allowlist"
+  },
+  "validation": {
+    "catalog": "schema-checked",
+    "runtime": "initialize-and-tools-list-only",
+    "live": false
+  },
+  "compatibilityNote": "Hermes storage format only; client installation and execution are not qualified. Live session tools additionally require UI_REVIEW_LIVE=1, BrowserStack CI secrets, and an owner-provided transport executable.",
+  "requires": [
+    "babashka",
+    "Owner-installed app-itonami-ui-review checkout",
+    "Owner-provided transport executable for live tools (optional; offline tools need none)"
+  ],
+  "launchResolution": {
+    "placeholder": "${UI_REVIEW_REPO}",
+    "behavior": "Replace the placeholder with the chosen absolute path before adding this configuration to a client. Generic MCP clients do not necessarily interpolate argv."
+  }
+}

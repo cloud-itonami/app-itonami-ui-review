@@ -8,12 +8,17 @@
 
 (load-file (str (-> *file* io/file .getParent io/file .getParent)
                 "/src/ui_review/core.cljc"))
+(load-file (str (-> *file* io/file .getParent io/file .getParent)
+                "/src/ui_review/agent_loop.cljc"))
 
 (def fns
   {"valid-target?" ui-review.core/valid-target?
    "matrix" ui-review.core/matrix
    "verdict" ui-review.core/verdict
-   "strip-secrets" ui-review.core/strip-secrets})
+   "strip-secrets" ui-review.core/strip-secrets
+   "plan-step" ui-review.agent-loop/plan-step
+   "loop-reduce" ui-review.agent-loop/loop-reduce
+   "summarize" ui-review.agent-loop/summarize})
 
 (defn run-case [{:keys [id fn args expect]}]
   (let [f (get fns fn)

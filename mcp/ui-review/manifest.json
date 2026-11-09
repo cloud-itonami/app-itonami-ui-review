@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1",
+  "type": "mcp",
+  "id": "ui-review",
+  "name": "UI Review",
+  "version": "0.1.0",
+  "description": "BrowserStack OSS-compatible UIUX review loop: offline validate/matrix/verdict/policy tools plus secrets-gated live session tools. Live tools refuse without owner transport and CI secrets.",
+  "author": "cloud-itonami",
+  "license": "AGPL-3.0-or-later",
+  "source": "https://github.com/cloud-itonami/app-itonami-ui-review",
+  "compatibility": {
+    "hermes": "*",
+    "desktop": "*"
+  },
+  "transport": "stdio",
+  "command": "bb",
+  "args": [
+    "${UI_REVIEW_REPO}/scripts/mcp_server.bb"
+  ],
+  "env": {
+    "UI_REVIEW_LIVE": "0"
+  }
+}
