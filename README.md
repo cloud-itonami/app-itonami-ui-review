@@ -7,6 +7,7 @@ using the BrowserStack Open Source program.
 - Status: **R0 design + pure nucleus**. No live BrowserStack runs yet.
 - Tracking: [AWAI-160](https://linear.app/kotobalabs/issue/AWAI-160)
   (Otehon policy; network-awai-apex ADR 0026).
+- License: AGPL-3.0-or-later (dApp convention, same as mihari/dandori).
 - Design: [docs/adr/0001-browserstack-oss-uiux-review.md](docs/adr/0001-browserstack-oss-uiux-review.md)
 - Core (pure, portable `.cljc`): `src/ui_review/core.cljc`
 - Cases (data): `cases/review-cases.edn`, runner: `scripts/run_cases.bb`
@@ -14,7 +15,7 @@ using the BrowserStack Open Source program.
 ## Why a separate public repo
 
 `network-awai-apex` is private, so it cannot itself qualify for the
-BrowserStack Open Source program. This repo is public (MIT) and holds only
+BrowserStack Open Source program. This repo is public (AGPL-3.0-or-later) and holds only
 the review harness: shape declarations, pure verdict logic, and case data.
 Review targets (Otehon shell builds, dApp artifacts) are referenced by
 digest and fetched at run time; they are never vendored here.
@@ -41,4 +42,4 @@ check.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Vendored content: none.
+AGPL-3.0-or-later — see [LICENSE](LICENSE). Vendored content: none.
