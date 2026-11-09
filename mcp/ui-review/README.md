@@ -1,6 +1,6 @@
 # mcp/ui-review — agent connection definition
 
-Hermes-layout MCP entry for `scripts/mcp_server.bb`
+Hermes-layout MCP entry for `scripts/mcp_server.cljc`
 (newline-delimited JSON-RPC over stdio).
 
 ## Tools

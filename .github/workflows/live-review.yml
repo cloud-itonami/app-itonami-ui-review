@@ -21,9 +21,9 @@ jobs:
         with:
           bb: latest
       - name: Offline shared cases (no secrets)
-        run: bb scripts/run_cases.bb
+        run: bb scripts/run_cases.cljc
       - name: Offline MCP self-check (no secrets)
-        run: bb scripts/mcp_selfcheck.bb
+        run: bb scripts/mcp_selfcheck.cljc
       - name: Live attempt (secrets-gated, fail-closed)
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
@@ -33,7 +33,7 @@ jobs:
             echo "live path armed, but no owner transport is configured in CI"
             echo "expected: blocked live-transport-missing (fail-closed)"
             printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"session-start","arguments":{"session":"ci-smoke"}}}' \
-              | UI_REVIEW_LIVE=1 bb scripts/mcp_server.bb | grep -q "live-transport-missing" \
+              | UI_REVIEW_LIVE=1 bb scripts/mcp_server.cljc | grep -q "live-transport-missing" \
               && echo "LIVE-BLOCKED-AS-DESIGNED" \
               || { echo "unexpected live response"; exit 1; }
           else

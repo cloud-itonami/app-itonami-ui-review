@@ -15,7 +15,7 @@
   "transport": "stdio",
   "command": "bb",
   "args": [
-    "${UI_REVIEW_REPO}/scripts/mcp_server.bb"
+    "${UI_REVIEW_REPO}/scripts/mcp_server.cljc"
   ],
   "env": {
     "UI_REVIEW_LIVE": "0"
